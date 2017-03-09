@@ -5,21 +5,22 @@ import com.p6spy.engine.common.StatementInformation;
 import com.p6spy.engine.event.JdbcEventListener;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
-import io.opentracing.contrib.spanmanager.SpanManager;
 import io.opentracing.tag.Tags;
+import io.opentracing.threadcontext.ContextSpan;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class SpanEventListener extends JdbcEventListener {
 
-    private final SpanManager spanManager;
+    private final ContextSpan spanContext;
     private final Tracer tracer;
     private final JdbcPeer peer;
 
-    public SpanEventListener(Tracer tracer, SpanManager spanManager, JdbcPeer peer) {
-        this.spanManager = spanManager;
+    public SpanEventListener(Tracer tracer, ContextSpan spanContext, JdbcPeer peer) {
+        this.spanContext = spanContext;
         this.tracer = tracer;
         this.peer = peer;
     }
@@ -49,12 +50,11 @@ public class SpanEventListener extends JdbcEventListener {
     }
 
     private void onAfterExecute(String type, StatementInformation statementInformation, long timeElapsedNanos, SQLException e) {
+        Instant end = Instant.now();
+        Instant start = end.minusNanos(timeElapsedNanos);
         String sql = statementInformation.getSql();
-        Span old = spanManager.currentSpan();
-        Instant now = Instant.now();
-        Instant start = now.minusNanos(timeElapsedNanos);
-        Span span = tracer.buildSpan("SQL " + type + sql.split("\\s", 2)[0])
-            .asChildOf(old)
+        Span span = tracer.buildSpan(String.format("SQL %s %s", type, new Scanner(sql).next()))
+            .asChildOf(spanContext.get())
             .withStartTimestamp(TimeUnit.SECONDS.toMicros(start.getEpochSecond()) + TimeUnit.NANOSECONDS.toMicros(start.getNano()))
             .start();
         Tags.SPAN_KIND.set(span, Tags.SPAN_KIND_CLIENT);
@@ -78,7 +78,7 @@ public class SpanEventListener extends JdbcEventListener {
         if (e != null) {
             Tags.ERROR.set(span, true);
         }
-        span.finish(TimeUnit.SECONDS.toMicros(now.getEpochSecond()) + TimeUnit.NANOSECONDS.toMicros(now.getNano()));
+        span.finish(TimeUnit.SECONDS.toMicros(end.getEpochSecond()) + TimeUnit.NANOSECONDS.toMicros(end.getNano()));
     }
 
 }
