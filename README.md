@@ -1,6 +1,6 @@
 # OpenTracing for JDBC
 
-[![Build Status](https://travis-ci.org/lucidsoftware/opentracing-jdbc.svg)](https://travis-ci.org/lucidsoftware/opentracing-jdbc)
+[![Build Status](https://travis-ci.com/lucidsoftware/opentracing-jdbc.svg)](https://travis-ci.com/lucidsoftware/opentracing-jdbc)
 ![Maven Version](https://img.shields.io/maven-central/v/com.lucidchart/opentracing-jdbc.svg)
 
 ## Install
