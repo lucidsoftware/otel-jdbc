@@ -5,8 +5,10 @@ import com.p6spy.engine.common.StatementInformation;
 import com.p6spy.engine.event.JdbcEventListener;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.noop.NoopSpan;
 import io.opentracing.tag.Tags;
 import io.opentracing.threadcontext.ContextSpan;
+
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -59,8 +61,9 @@ public class SpanEventListener extends JdbcEventListener {
         Instant end = Instant.now();
         Instant start = end.minusNanos(timeElapsedNanos);
         String sql = statementInformation.getSql();
+        Span parentSpan = spanContext.get() != NoopSpan.INSTANCE ? spanContext.get() : null;
         Span span = tracer.buildSpan(String.format("SQL %s %s", type, new Scanner(sql).next()))
-            .asChildOf(spanContext.get())
+            .asChildOf(parentSpan)
             .withStartTimestamp(TimeUnit.SECONDS.toMicros(start.getEpochSecond()) + TimeUnit.NANOSECONDS.toMicros(start.getNano()))
             .start();
         Tags.SPAN_KIND.set(span, Tags.SPAN_KIND_CLIENT);
