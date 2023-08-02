@@ -8,7 +8,8 @@ import io.opentracing.Tracer;
 import io.opentracing.noop.NoopSpan;
 import io.opentracing.tag.Tags;
 import io.opentracing.threadcontext.ContextSpan;
-
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -86,6 +87,11 @@ public class SpanEventListener extends JdbcEventListener {
         span.setTag("jdbc.query", sql);
         if (e != null) {
             Tags.ERROR.set(span, true);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            span.setTag("error.message", e.getMessage() + ". SqlState: " + e.getSQLState()+ ". ErrorCode: " +e.getErrorCode());
+            span.setTag("error.stack", sw.toString());
         }
         span.finish(TimeUnit.SECONDS.toMicros(end.getEpochSecond()) + TimeUnit.NANOSECONDS.toMicros(end.getNano()));
     }
