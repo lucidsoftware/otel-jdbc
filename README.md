@@ -1,16 +1,15 @@
-# OpenTracing for JDBC
+# OpenTelemetry for JDBC
 
-[![Build Status](https://travis-ci.com/lucidsoftware/opentracing-jdbc.svg)](https://travis-ci.com/lucidsoftware/opentracing-jdbc)
-![Maven Version](https://img.shields.io/maven-central/v/com.lucidchart/opentracing-jdbc.svg)
+![Maven Version](https://img.shields.io/maven-central/v/com.lucidchart/otel-jdbc.svg)
 
 ## Install
 
-Published as the `com.lucidchart:opentracing-jdbc` artifact.
+Published as the `com.lucidchart:otel-jdbc` artifact.
 
 ## Example
 
 ```java
-import io.opentracing.contrib.jdbc.*;
+import com.lucidchart.otel.jdbc.*;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
