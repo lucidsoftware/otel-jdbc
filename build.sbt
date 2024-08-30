@@ -9,18 +9,21 @@ inScope(Global)(Seq(
     sys.env.getOrElse("SONATYPE_PASSWORD", ""
   )),
   crossPaths := false,
-  developers += Developer("pauldraper", "Paul Draper", "paulddraper@gmail.com", url("https://github.com/pauldraper")),
-  homepage := Some(url("https://git.lucidchart.com/lucidsoftware/opentracing-playframework")),
+  developers ++= List(
+    Developer("lucidsoftware", "Lucid Software, Inc.", "support@lucid.co", url("https://lucid.co")),
+    Developer("tmccombs", "Thayne McCombs", "thayne@lucid.co", url("https://github.com/tmccombs")),
+  ),
+  homepage := Some(url("https://git.lucidchart.com/lucidsoftware/otel-jdbc")),
   licenses += "Apache 2.0 License" -> url("https://www.apache.org/licenses/LICENSE-2.0"),
   organization := "com.lucidchart",
-  organizationHomepage := Some(url("http://opentracing.io/")),
-  organizationName := "OpenTracing",
+  organizationHomepage := Some(url("http://lucid.co/")),
+  organizationName := "Lucid Software, Inc.",
   scmInfo := Some(ScmInfo(
-    url("https://github.com/lucidsoftware/opentracing-jdbc"),
-    "scm:git:git@github.com:lucidsoftware/opentracing-jdbc.git"
+    url("https://github.com/lucidsoftware/otel-jdbc"),
+    "scm:git:git@github.com:lucidsoftware/otel-jdbc.git"
   )),
-  startYear := Some(2017),
+  startYear := Some(2024),
   version := sys.props.getOrElse("build.version", "0-SNAPSHOT")
 ))
 
-skip in publish := true
+publish / skip := true
